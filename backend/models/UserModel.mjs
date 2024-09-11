@@ -1,22 +1,22 @@
 import { Sequelize } from "sequelize";
 import db from "../config/database.mjs";
 
-const { DataType } = Sequelize;
+const { DataTypes } = Sequelize;
 
 const Users = db.define(
   "users",
   {
     name: {
-      type: DataType.STRING,
+      type: DataTypes.STRING,
     },
     email: {
-      type: DataType.STRING,
+      type: DataTypes.STRING,
     },
     password: {
-      type: DataType.STRING,
+      type: DataTypes.STRING,
     },
     refresh_toke: {
-      type: DataType.STRING,
+      type: DataTypes.STRING,
     },
   },
   {

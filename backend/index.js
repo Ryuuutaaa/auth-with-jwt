@@ -1,11 +1,13 @@
 import express from "express";
 import db from "./config/database.mjs";
+import Users from "./models/UserModel.mjs";
 
 const app = express();
 
 try {
   await db.authenticate();
   console.log("database connectd...");
+  await Users.sync();
 } catch (error) {
   console.log(error);
 }
