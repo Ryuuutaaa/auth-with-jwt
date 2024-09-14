@@ -25,6 +25,7 @@ export const Register = async (req, res) => {
       email: email,
       password: password,
     });
+    res.json({ msh: "Register berhasil" });
   } catch (error) {
     console.log(error);
   }
