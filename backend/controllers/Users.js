@@ -71,6 +71,13 @@ export const Login = async (req, res) => {
         },
       }
     );
+
+    res.cookie("refreshToken", refershToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ accessToken });
   } catch (error) {
     res.status(404).json({ msg: "Email tidak dapat ditemukan" });
   }
