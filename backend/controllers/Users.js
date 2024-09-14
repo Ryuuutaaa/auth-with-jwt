@@ -13,22 +13,23 @@ export const getUsers = async (req, res) => {
 
 export const Register = async (req, res) => {
   const { name, email, password, confPassword } = req.body;
-  if (password !== confPassword)
+  if (password !== confPassword) {
     return res
       .status(400)
-      .json({ msg: "Password dan Confirm Password tidak cocok" });
-
+      .json({ msg: "Password dan konfirmasi password tidak sama" });
+  }
   const salt = await bcrypt.genSalt();
-  const hashPassword = await bcrypt.hash(password, salt);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   try {
     await Users.create({
       name: name,
       email: email,
-      password: hashPassword,
+      password: hashedPassword,
     });
-    res.json({ msh: "Register berhasil" });
+    res.json({ msg: "Registrasi berhasil" });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
   }
 };
 
@@ -40,8 +41,12 @@ export const Login = async (req, res) => {
       },
     });
 
-    const math = await bcrypt.compare(req.body.password, user[0].password);
-    if (!math) return res.status(400).json({ msg: "Wrong password" });
+    if (user.length === 0) {
+      return res.status(404).json({ msg: "Email tidak ditemukan" });
+    }
+
+    const match = await bcrypt.compare(req.body.password, user[0].password);
+    if (!match) return res.status(400).json({ msg: "Password salah" });
 
     const userId = user[0].id;
     const name = user[0].name;
@@ -55,7 +60,7 @@ export const Login = async (req, res) => {
       }
     );
 
-    const refershToken = jwt.sign(
+    const refreshToken = jwt.sign(
       { userId, name, email },
       process.env.REFRESH_TOKEN_SECRET,
       {
@@ -64,7 +69,7 @@ export const Login = async (req, res) => {
     );
 
     await Users.update(
-      { refershToken: refershToken },
+      { refreshToken: refreshToken },
       {
         where: {
           id: userId,
@@ -72,13 +77,13 @@ export const Login = async (req, res) => {
       }
     );
 
-    res.cookie("refreshToken", refershToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 1 hari
     });
 
     res.json({ accessToken });
   } catch (error) {
-    res.status(404).json({ msg: "Email tidak dapat ditemukan" });
+    res.status(500).json({ msg: "Server error" });
   }
 };

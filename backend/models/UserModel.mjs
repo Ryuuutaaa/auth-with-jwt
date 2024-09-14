@@ -15,7 +15,7 @@ const Users = db.define(
     password: {
       type: DataTypes.STRING,
     },
-    refresh_toke: {
+    refresh_token: {
       type: DataTypes.STRING,
     },
   },
