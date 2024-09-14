@@ -1,7 +1,9 @@
 import express from "express";
 import db from "./config/database.mjs";
 import router from "./routes/index.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 try {
