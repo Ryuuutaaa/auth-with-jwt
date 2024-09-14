@@ -23,7 +23,7 @@ export const Register = async (req, res) => {
     await Users.create({
       name: name,
       email: email,
-      password: password,
+      password: hashPassword,
     });
     res.json({ msh: "Register berhasil" });
   } catch (error) {
